@@ -1,32 +1,34 @@
 document.addEventListener("DOMContentLoaded", fetchTickets);
 
 async function fetchTickets() {
-    // Call the Netlify serverless function
     const response = await fetch('/.netlify/functions/getTickets');
     const data = await response.json();
     
-    // Print the raw response to the console to see what Jira is complaining about
     console.log("Jira API Response:", data);
     
-    // Safety check: Stop the function if 'issues' is missing
     if (!data.issues) {
         console.error("Failed to load tickets. The 'issues' array is missing from the data.");
         return; 
     }
 
     const queuedContainer = document.querySelector('#queued .ticket-container');
-    queuedContainer.innerHTML = ''; // Clear loading states
+    queuedContainer.innerHTML = ''; // Clear loading state
 
     data.issues.forEach(issue => {
         const card = document.createElement('div');
         card.className = 'ticket-card';
         card.draggable = true;
-        card.id = issue.key;
+        
+        // Fallback to issue.id if issue.key is undefined
+        const key = issue.key || issue.id;
+        const summary = issue.fields?.summary || 'No Summary Provided';
+
+        card.id = key;
         card.ondragstart = drag;
         
         card.innerHTML = `
-            <strong>${issue.key}</strong>
-            <p>${issue.fields.summary}</p>
+            <strong>${key}</strong>
+            <p>${summary}</p>
         `;
         
         queuedContainer.appendChild(card);
@@ -35,7 +37,7 @@ async function fetchTickets() {
 
 // Drag and Drop Logic
 function allowDrop(ev) {
-    ev.preventDefault(); // Necessary to allow dropping
+    ev.preventDefault();
 }
 
 function drag(ev) {
@@ -47,16 +49,12 @@ async function drop(ev) {
     const issueKey = ev.dataTransfer.getData("text");
     const card = document.getElementById(issueKey);
     
-    // Find the closest column the card was dropped into
     const dropZone = ev.target.closest('.column');
     if (!dropZone) return;
 
     dropZone.querySelector('.ticket-container').appendChild(card);
     
-    // Get the Jira transition ID assigned to this column in the HTML data attribute
     const transitionId = dropZone.getAttribute('data-transition-id');
-    
-    // Send update to Jira via Netlify Function
     await updateJiraTicket(issueKey, transitionId);
 }
 

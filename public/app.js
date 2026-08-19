@@ -5,6 +5,15 @@ async function fetchTickets() {
     const response = await fetch('/.netlify/functions/getTickets');
     const data = await response.json();
     
+    // Print the raw response to the console to see what Jira is complaining about
+    console.log("Jira API Response:", data);
+    
+    // Safety check: Stop the function if 'issues' is missing
+    if (!data.issues) {
+        console.error("Failed to load tickets. The 'issues' array is missing from the data.");
+        return; 
+    }
+
     const queuedContainer = document.querySelector('#queued .ticket-container');
     queuedContainer.innerHTML = ''; // Clear loading states
 
@@ -20,7 +29,6 @@ async function fetchTickets() {
             <p>${issue.fields.summary}</p>
         `;
         
-        // By default, place them in queued. You can add logic to place them based on sub-tasks or labels.
         queuedContainer.appendChild(card);
     });
 }

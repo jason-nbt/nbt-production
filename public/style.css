@@ -1,17 +1,111 @@
-/* Ensure the body takes full height and prevents unwanted scrolling outside main */
-html, body {
+/* --- Global Variables & Typography --- */
+:root {
+    --bg-color: #f4f5f7;        /* Standard Jira light gray background */
+    --card-bg: #ffffff;
+    --text-main: #172b4d;
+    --text-muted: #5e6c84;
+    --accent-blue: #0052cc;
+    --qty-green: #006644;
+    --qty-bg: #e3fcef;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-main);
     margin: 0;
+    padding: 20px;
+}
+
+/* --- Header --- */
+header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+header h1 {
+    font-size: 32px;
+    color: var(--text-main);
+    margin: 0;
+}
+
+/* --- Board & Column Layout --- */
+.board {
+    display: flex;
+    gap: 25px;
+    align-items: flex-start;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.column {
+    background-color: #ebecf0;
+    border-radius: 8px;
+    width: 33.33%;
+    min-width: 300px;
+    padding: 15px;
+}
+
+.column h2 {
+    font-size: 14px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-top: 5px;
+    margin-bottom: 15px;
+    padding-left: 5px;
+}
+
+/* --- Ticket Cards --- */
+.ticket-card {
+    background-color: var(--card-bg);
+    border-radius: 6px;
+    padding: 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 1px 2px rgba(9, 30, 66, 0.25);
+    border-left: 4px solid var(--accent-blue); /* Blue accent line on the left */
+}
+
+/* Ticket ID (e.g. NE-244) */
+.ticket-card > strong {
+    display: inline-block;
+    color: var(--text-muted);
+    font-size: 13px;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+/* Ticket Summary / Customer Name */
+.ticket-card p {
+    margin: 0 0 15px 0;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+/* --- Production Items (The Quantities) --- */
+.production-items ul {
+    list-style-type: none;
     padding: 0;
-    height: 100%;
-    overscroll-behavior-y: none;
+    margin: 0;
 }
 
-/* Safe area paddings for modern mobile phones with notches/home bars */
-.pb-safe {
-    padding-bottom: env(safe-area-inset-bottom, 20px);
+.production-items li {
+    background-color: #fafbfc;
+    border: 1px solid #dfe1e6;
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-size: 14px;
+    margin-bottom: 6px;
+    display: flex;             /* Puts item and quantity on the same line */
+    justify-content: space-between; /* Pushes item left, quantity right */
+    align-items: center;
 }
 
-/* Smooth transitions for UI states */
-.hidden {
-    display: none !important;
+/* The Quantity Number Badge */
+.production-items li strong {
+    color: var(--qty-green);
+    background-color: var(--qty-bg);
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 15px;
 }

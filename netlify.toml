@@ -1,0 +1,10 @@
+[build]
+  # The directory containing your index.html and frontend assets
+  publish = "public"
+  
+  # The directory containing your serverless backend code
+  functions = "netlify/functions"
+
+[dev]
+  # Allows you to test the functions locally using Netlify CLI
+  targetPort = 3000

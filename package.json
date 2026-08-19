@@ -1,0 +1,14 @@
+{
+  "name": "production-board",
+  "version": "1.0.0",
+  "description": "Drag-and-drop Jira production board",
+  "main": "public/app.js",
+  "scripts": {
+    "build": "echo 'No build step required for plain HTML'"
+  },
+  "dependencies": {
+    "node-fetch": "^2.7.0"
+  },
+  "author": "",
+  "license": "ISC"
+}

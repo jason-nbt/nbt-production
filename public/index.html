@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NBT Production Board</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Emulsion Plant Production Board</h1>
+    </header>
+    
+    <div class="board">
+        <!-- Columns match the sub-stages of production -->
+        <div class="column" id="queued" ondrop="drop(event)" ondragover="allowDrop(event)" data-transition-id="11">
+            <h2>Queued</h2>
+            <div class="ticket-container"></div>
+        </div>
+        
+        <div class="column" id="in-production" ondrop="drop(event)" ondragover="allowDrop(event)" data-transition-id="21">
+            <h2>In Production</h2>
+            <div class="ticket-container"></div>
+        </div>
+        
+        <div class="column" id="produced" ondrop="drop(event)" ondragover="allowDrop(event)" data-transition-id="31">
+            <h2>Produced</h2>
+            <div class="ticket-container"></div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

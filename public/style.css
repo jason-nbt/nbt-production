@@ -109,3 +109,53 @@ header h1 {
     border-radius: 12px;
     font-size: 15px;
 }
+
+/* --- Column Totals --- */
+.column-totals {
+    margin-bottom: 20px;
+}
+
+.totals-header {
+    font-size: 12px;
+    text-transform: uppercase;
+    font-weight: bold;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+}
+
+.column-totals ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.column-totals li {
+    background-color: #e3fcef; /* Green tint to highlight totals */
+    border: 1px solid #abf5d1;
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-size: 15px;
+    font-weight: 500;
+    margin-bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #006644;
+}
+
+.column-totals li strong {
+    background-color: #ffffff;
+    color: #006644;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 16px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.column hr {
+    border: 0;
+    height: 1px;
+    background: #dfe1e6;
+    margin: 15px 0 5px 0;
+}

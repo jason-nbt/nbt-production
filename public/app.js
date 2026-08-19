@@ -9,13 +9,44 @@ async function fetchTickets() {
         return; 
     }
 
-    // Inspect the first ticket to find your custom field IDs
-    console.log("Look inside this 'fields' object to find the customfield_ IDs for Items 1-3 and Qty 1-3:", data.issues[0].fields);
+    const containers = {
+        'queued': document.querySelector('#queued .ticket-container'),
+        'in-production': document.querySelector('#in-production .ticket-container'),
+        'produced': document.querySelector('#produced .ticket-container')
+    };
 
-    const queuedContainer = document.querySelector('#queued .ticket-container');
-    queuedContainer.innerHTML = ''; 
+    // Clear existing tickets and totals
+    Object.values(containers).forEach(container => container.innerHTML = '');
+    document.querySelectorAll('.column-totals').forEach(el => el.innerHTML = '');
+
+    // Object to hold our running tallies
+    const totals = {
+        'queued': {},
+        'in-production': {},
+        'produced': {}
+    };
+
+    // Helper function to tally up items safely
+    function tallyItem(columnId, itemField, qtyField) {
+        if (itemField && qtyField) {
+            const itemName = itemField.value || itemField;
+            const quantity = parseInt(qtyField, 10) || 0; // Convert string to integer
+            
+            if (!totals[columnId][itemName]) {
+                totals[columnId][itemName] = 0;
+            }
+            totals[columnId][itemName] += quantity;
+            
+            return `<li>${itemName}: <strong>${qtyField}</strong></li>`;
+        }
+        return '';
+    }
 
     data.issues.forEach(issue => {
+        // NOTE: Determine which column this ticket belongs to. 
+        // Assuming 'queued' by default unless you map Jira sub-statuses later.
+        const columnId = 'queued'; 
+
         const card = document.createElement('div');
         card.className = 'ticket-card';
         
@@ -31,29 +62,12 @@ async function fetchTickets() {
         const qty3  = issue.fields.customfield_10218;
         
         let productionItemsHtml = '<ul>';
-        
-        // Item 1
-        if (item1 && qty1) {
-            const itemName = item1.value || item1; 
-            productionItemsHtml += `<li>${itemName}: <strong>${qty1}</strong></li>`;
-        }
-        
-        // Item 2
-        if (item2 && qty2) {
-            const itemName = item2.value || item2; 
-            productionItemsHtml += `<li>${itemName}: <strong>${qty2}</strong></li>`;
-        }
-
-        // Item 3
-        if (item3 && qty3) {
-            const itemName = item3.value || item3; 
-            productionItemsHtml += `<li>${itemName}: <strong>${qty3}</strong></li>`;
-        }
-        
+        productionItemsHtml += tallyItem(columnId, item1, qty1);
+        productionItemsHtml += tallyItem(columnId, item2, qty2);
+        productionItemsHtml += tallyItem(columnId, item3, qty3);
         productionItemsHtml += '</ul>';
 
         card.id = key;
-        
         card.innerHTML = `
             <strong>${key}</strong>
             <p>${summary}</p>
@@ -62,6 +76,22 @@ async function fetchTickets() {
             </div>
         `;
         
-        queuedContainer.appendChild(card);
+        containers[columnId].appendChild(card);
+    });
+
+    // Render the final totals into the UI
+    Object.keys(totals).forEach(colId => {
+        const totalDiv = document.querySelector(`#${colId} .column-totals`);
+        const columnTotals = totals[colId];
+        
+        if (Object.keys(columnTotals).length === 0) return; // Skip if empty
+
+        let totalsHtml = '<div class="totals-header">Total Required</div><ul>';
+        for (const [itemName, totalQty] of Object.entries(columnTotals)) {
+            totalsHtml += `<li>${itemName}: <strong>${totalQty}</strong></li>`;
+        }
+        totalsHtml += '</ul><hr>';
+        
+        totalDiv.innerHTML = totalsHtml;
     });
 }

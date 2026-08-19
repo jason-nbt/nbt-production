@@ -4,64 +4,64 @@ async function fetchTickets() {
     const response = await fetch('/.netlify/functions/getTickets');
     const data = await response.json();
     
-    console.log("Jira API Response:", data);
-    
     if (!data.issues) {
-        console.error("Failed to load tickets. The 'issues' array is missing from the data.");
+        console.error("Failed to load tickets. The 'issues' array is missing.");
         return; 
     }
 
+    // Inspect the first ticket to find your custom field IDs
+    console.log("Look inside this 'fields' object to find the customfield_ IDs for Items 1-3 and Qty 1-3:", data.issues[0].fields);
+
     const queuedContainer = document.querySelector('#queued .ticket-container');
-    queuedContainer.innerHTML = ''; // Clear loading state
+    queuedContainer.innerHTML = ''; 
 
     data.issues.forEach(issue => {
         const card = document.createElement('div');
         card.className = 'ticket-card';
-        card.draggable = true;
         
-        // Fallback to issue.id if issue.key is undefined
         const key = issue.key || issue.id;
         const summary = issue.fields?.summary || 'No Summary Provided';
 
+        // --- REPLACE THESE IDs ONCE YOU FIND THEM IN THE CONSOLE ---
+        const item1 = issue.fields.customfield_XXXXX; 
+        const qty1  = issue.fields.customfield_YYYYY;
+        const item2 = issue.fields.customfield_ZZZZZ;
+        const qty2  = issue.fields.customfield_AAAAA;
+        const item3 = issue.fields.customfield_BBBBB; 
+        const qty3  = issue.fields.customfield_CCCCC;
+        
+        let productionItemsHtml = '<ul>';
+        
+        // Item 1
+        if (item1 && qty1) {
+            const itemName = item1.value || item1; 
+            productionItemsHtml += `<li>${itemName}: <strong>${qty1}</strong></li>`;
+        }
+        
+        // Item 2
+        if (item2 && qty2) {
+            const itemName = item2.value || item2; 
+            productionItemsHtml += `<li>${itemName}: <strong>${qty2}</strong></li>`;
+        }
+
+        // Item 3
+        if (item3 && qty3) {
+            const itemName = item3.value || item3; 
+            productionItemsHtml += `<li>${itemName}: <strong>${qty3}</strong></li>`;
+        }
+        
+        productionItemsHtml += '</ul>';
+
         card.id = key;
-        card.ondragstart = drag;
         
         card.innerHTML = `
             <strong>${key}</strong>
             <p>${summary}</p>
+            <div class="production-items">
+                ${productionItemsHtml}
+            </div>
         `;
         
         queuedContainer.appendChild(card);
-    });
-}
-
-// Drag and Drop Logic
-function allowDrop(ev) {
-    ev.preventDefault();
-}
-
-function drag(ev) {
-    ev.dataTransfer.setData("text", ev.target.id);
-}
-
-async function drop(ev) {
-    ev.preventDefault();
-    const issueKey = ev.dataTransfer.getData("text");
-    const card = document.getElementById(issueKey);
-    
-    const dropZone = ev.target.closest('.column');
-    if (!dropZone) return;
-
-    dropZone.querySelector('.ticket-container').appendChild(card);
-    
-    const transitionId = dropZone.getAttribute('data-transition-id');
-    await updateJiraTicket(issueKey, transitionId);
-}
-
-async function updateJiraTicket(issueKey, transitionId) {
-    await fetch('/.netlify/functions/moveTicket', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ issueKey, transitionId })
     });
 }

@@ -6,7 +6,7 @@ exports.handler = async function(event, context) {
     const jql = 'project = "NE" AND status = "PRODUCING"';
     
     // Explicitly requesting summary and key fields
-    const url = `${process.env.JIRA_URL}/rest/api/3/search/jql?jql=${encodeURIComponent(jql)}&fields=summary,key`;
+    const url = `${process.env.JIRA_URL}/rest/api/3/search/jql?jql=${encodeURIComponent(jql)}&fields=*all`;
 
     try {
         const response = await fetch(url, {

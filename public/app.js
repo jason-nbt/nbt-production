@@ -130,11 +130,14 @@ async function fetchTickets() {
 
     Object.keys(totals).forEach(colId => {
         const totalDiv = document.querySelector(`#${colId} .column-totals`);
-        const columnTotals = totals[colId];
+        // Use consistent variable naming (columnData)
+        const columnData = totals[colId]; 
         
-        if (Object.keys(columnTotals).length === 0) return; 
+        // Check if the actual items list is empty, not the parent object
+        if (Object.keys(columnData.items).length === 0) return; 
 
         let totalsHtml = '<div class="totals-header">Total Required</div><ul>';
+        
         // Loop through the regular items
         for (const [itemName, totalQty] of Object.entries(columnData.items)) {
             totalsHtml += `<li>${itemName}: <strong>${totalQty}</strong></li>`;

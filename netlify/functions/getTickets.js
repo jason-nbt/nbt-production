@@ -3,9 +3,11 @@ const fetch = require('node-fetch');
 exports.handler = async function(event, context) {
     const credentials = Buffer.from(`${process.env.JIRA_EMAIL}:${process.env.JIRA_API_TOKEN}`).toString('base64');
     
-    // JQL to grab only tickets in the PRODUCING status
+    // Ensure you replace YOUR_PROJECT_KEY with your actual Jira project key
     const jql = 'project = "NE" AND status = "PRODUCING"';
-    const url = `${process.env.JIRA_URL}/rest/api/3/search?jql=${encodeURIComponent(jql)}`;
+    
+    // UPDATED: Using the new Atlassian search/jql endpoint
+    const url = `${process.env.JIRA_URL}/rest/api/3/search/jql?jql=${encodeURIComponent(jql)}`;
 
     try {
         const response = await fetch(url, {

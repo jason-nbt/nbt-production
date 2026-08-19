@@ -6,29 +6,33 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
+    <header style="position: relative;">
         <h1>Emulsion Plant Production Board</h1>
+        <!-- Admin Login Button -->
+        <button id="loginBtn" onclick="adminLogin()">Admin Login</button>
     </header>
     
     <div class="board">
-		<div class="column" id="queued">
-			<h2>Queued</h2>
-			<div class="column-totals"></div> <!-- Add this -->
-			<div class="ticket-container"></div>
-		</div>
-		
-		<div class="column" id="in-production">
-			<h2>In Production</h2>
-			<div class="column-totals"></div> <!-- Add this -->
-			<div class="ticket-container"></div>
-		</div>
-		
-		<div class="column" id="produced">
-			<h2>Produced</h2>
-			<div class="column-totals"></div> <!-- Add this -->
-			<div class="ticket-container"></div>
-		</div>
-	</div>
+        <!-- Added drag and drop events -->
+        <div class="column" id="queued" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <h2>Queued</h2>
+            <div class="column-totals"></div>
+            <div class="ticket-container"></div>
+        </div>
+        
+        <div class="column" id="in-production" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <h2>In Production</h2>
+            <div class="column-totals"></div>
+            <div class="ticket-container"></div>
+        </div>
+        
+        <!-- Added transition ID for the API push -->
+        <div class="column" id="produced" ondrop="drop(event)" ondragover="allowDrop(event)" data-transition-id="4">
+            <h2>Produced</h2>
+            <div class="column-totals"></div>
+            <div class="ticket-container"></div>
+        </div>
+    </div>
 
     <script src="app.js"></script>
 </body>

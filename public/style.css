@@ -159,3 +159,32 @@ header h1 {
     background: #dfe1e6;
     margin: 15px 0 5px 0;
 }
+
+/* --- Admin & Interactive Styles --- */
+#loginBtn {
+    background-color: var(--text-muted);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    transition: background-color 0.2s;
+}
+
+#loginBtn:hover {
+    background-color: var(--text-main);
+}
+
+/* Show a grab hand only when cards are draggable (Admin Mode) */
+.ticket-card[draggable="true"] {
+    cursor: grab;
+}
+
+.ticket-card[draggable="true"]:active {
+    cursor: grabbing;
+    opacity: 0.8;
+}

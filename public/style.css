@@ -188,3 +188,16 @@ header h1 {
     cursor: grabbing;
     opacity: 0.8;
 }
+
+/* --- Highlighted Final Material Calculation --- */
+.column-totals li.bitumen-total {
+    background-color: #fffae6; /* Light yellow background */
+    border: 1px solid #ffc400; /* Amber border */
+    color: #172b4d;            /* Dark text */
+    margin-top: 10px;          /* Extra spacing from the items */
+}
+
+.column-totals li.bitumen-total strong {
+    background-color: #ff991f; /* Orange/Amber badge */
+    color: #ffffff;
+}

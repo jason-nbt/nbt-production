@@ -11,6 +11,20 @@ async function fetchTickets() {
         console.error("Failed to load tickets. The 'issues' array is missing.");
         return; 
     }
+	
+	// --- NEW SORTING LOGIC ---
+    // Sort issues in ascending numerical order based on their ID
+    data.issues.sort((a, b) => {
+        const keyA = a.key || a.id;
+        const keyB = b.key || b.id;
+        
+        // Strip out the prefix letters (e.g., "NE-") and convert to integers
+        const numA = parseInt(keyA.replace(/\D/g, ''), 10);
+        const numB = parseInt(keyB.replace(/\D/g, ''), 10);
+        
+        return numA - numB; // Ascending order
+    });
+    // -------------------------
 
     const containers = {
         'queued': document.querySelector('#queued .ticket-container'),
@@ -21,15 +35,56 @@ async function fetchTickets() {
     Object.values(containers).forEach(container => container.innerHTML = '');
     document.querySelectorAll('.column-totals').forEach(el => el.innerHTML = '');
 
-    const totals = { 'queued': {}, 'in-production': {}, 'produced': {} };
+    // --- UPDATED TOTALS STRUCTURE ---
+    // Now tracking individual items AND the combined Bitumen MT
+    const totals = { 
+        'queued': { items: {}, bitumenMT: 0 }, 
+        'in-production': { items: {}, bitumenMT: 0 }, 
+        'produced': { items: {}, bitumenMT: 0 } 
+    };
+	
+	// Note: Order matters here. "RS-1K (50%)" must be checked before "RS-1K"
+    const bitumenRates = [
+        { name: 'RS-1K (50%)', pct: 0.50 },
+        { name: 'RS-1K', pct: 0.43 },
+        { name: 'RS-3K', pct: 0.60 },
+        { name: 'K1-40', pct: 0.35 },
+        { name: 'SS-1K', pct: 0.53 },
+        { name: 'Neomad', pct: 0.57 }
+    ];
+
+    function getBitumenMT(itemName, quantity) {
+        let percentage = 0;
+        
+        for (const rate of bitumenRates) {
+            if (itemName.includes(rate.name)) {
+                percentage = rate.pct;
+                break;
+            }
+        }
+        if (percentage === 0) return 0; // Fallback if no match
+
+        // If it's a drum, convert to MT first (1 MT = 5.2 Drums)
+        const isDrum = itemName.toLowerCase().includes('drum');
+        const emulsionMT = isDrum ? (quantity / 5.2) : quantity;
+
+        // Multiply total emulsion MT by the bitumen percentage
+        return emulsionMT * percentage;
+    }
 
     function tallyItem(columnId, itemField, qtyField) {
         if (itemField && qtyField) {
             const itemName = itemField.value || itemField;
             const quantity = parseInt(qtyField, 10) || 0; 
             
-            if (!totals[columnId][itemName]) totals[columnId][itemName] = 0;
-            totals[columnId][itemName] += quantity;
+            // Tally physical quantity
+            if (!totals[columnId].items[itemName]) {
+                totals[columnId].items[itemName] = 0;
+            }
+            totals[columnId].items[itemName] += quantity;
+            
+            // Calculate and add Bitumen MT
+            totals[columnId].bitumenMT += getBitumenMT(itemName, quantity);
             
             return `<li>${itemName}: <strong>${qtyField}</strong></li>`;
         }
@@ -80,9 +135,14 @@ async function fetchTickets() {
         if (Object.keys(columnTotals).length === 0) return; 
 
         let totalsHtml = '<div class="totals-header">Total Required</div><ul>';
-        for (const [itemName, totalQty] of Object.entries(columnTotals)) {
+        // Loop through the regular items
+        for (const [itemName, totalQty] of Object.entries(columnData.items)) {
             totalsHtml += `<li>${itemName}: <strong>${totalQty}</strong></li>`;
         }
+        
+        // Append the Final Bitumen MT
+        totalsHtml += `<li class="bitumen-total">Bitumen Req: <strong>${columnData.bitumenMT.toFixed(2)} MT</strong></li>`;
+        
         totalsHtml += '</ul><hr>';
         
         totalDiv.innerHTML = totalsHtml;

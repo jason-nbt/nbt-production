@@ -23,12 +23,12 @@ async function fetchTickets() {
         const summary = issue.fields?.summary || 'No Summary Provided';
 
         // --- REPLACE THESE IDs ONCE YOU FIND THEM IN THE CONSOLE ---
-        const item1 = issue.fields.customfield_XXXXX; 
-        const qty1  = issue.fields.customfield_YYYYY;
-        const item2 = issue.fields.customfield_ZZZZZ;
-        const qty2  = issue.fields.customfield_AAAAA;
-        const item3 = issue.fields.customfield_BBBBB; 
-        const qty3  = issue.fields.customfield_CCCCC;
+        const item1 = issue.fields.customfield_10215; 
+        const qty1  = issue.fields.customfield_10216;
+        const item2 = issue.fields.customfield_10217;
+        const qty2  = issue.fields.customfield_10219;
+        const item3 = issue.fields.customfield_10220; 
+        const qty3  = issue.fields.customfield_10218;
         
         let productionItemsHtml = '<ul>';
         

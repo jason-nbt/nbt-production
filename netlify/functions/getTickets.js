@@ -4,7 +4,7 @@ exports.handler = async function(event, context) {
     const credentials = Buffer.from(`${process.env.JIRA_EMAIL}:${process.env.JIRA_API_TOKEN}`).toString('base64');
     
     // JQL to grab only tickets in the PRODUCING status
-    const jql = 'status = "PRODUCING"';
+    const jql = 'project = "NE" AND status = "PRODUCING"';
     const url = `${process.env.JIRA_URL}/rest/api/3/search?jql=${encodeURIComponent(jql)}`;
 
     try {
